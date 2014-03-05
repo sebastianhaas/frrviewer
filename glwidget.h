@@ -21,7 +21,7 @@ protected:
     void resizeGL(int width, int height);
 
 private:
-    QColor backgroundColor;
+    QColor m_backgroundColor;
 };
 
 #endif // OPENGLWIDGET_H
