@@ -3,7 +3,8 @@
 GLWidget::GLWidget(QWidget *parent)
     : QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
-    m_backgroundColor = QColor::fromRgb(235.0, 235.0, 235.0);
+    backgroundColor = QColor::fromRgb(235.0, 235.0, 235.0);
+    objParser.readObjFile("C:/Users/Sebastian/Desktop/capsule.obj");
 }
 
 GLWidget::~GLWidget()
@@ -12,7 +13,7 @@ GLWidget::~GLWidget()
 
 void GLWidget::initializeGL()
 {
-    qglClearColor(m_backgroundColor);
+    qglClearColor(backgroundColor);
     glEnable(GL_DEPTH_TEST);
     glShadeModel(GL_FLAT);
     glShadeModel(GL_SMOOTH);
@@ -31,65 +32,10 @@ void GLWidget::paintGL()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glTranslatef(0.0f,0.0f,-20.0f); //move along z-axis
-    glRotatef(30.0,0.0,1.0,0.0); //rotate 30 degress around y-axis
-    glRotatef(15.0,1.0,0.0,0.0); //rotate 15 degress around x-axis
+    //        glRotatef(30.0,0.0,1.0,0.0); //rotate 30 degress around y-axis
+    //        glRotatef(15.0,1.0,0.0,0.0); //rotate 15 degress around x-axis
 
-    glBegin(GL_QUADS);
-
-    //front
-    glColor3f(1.0,0.0,0.0);
-
-    glVertex3f(1.0,1.0,1.0);
-    glVertex3f(-1.0,1.0,1.0);
-    glVertex3f(-1.0,-1.0,1.0);
-    glVertex3f(1.0,-1.0,1.0);
-
-
-    //back
-
-    glColor3f(0.0,1.0,0.0);
-
-    glVertex3f(1.0,1.0,-1.0);
-    glVertex3f(-1.0,1.0,-1.0);
-    glVertex3f(-1.0,-1.0,-1.0);
-    glVertex3f(1.0,-1.0,-1.0);
-
-
-    //top
-    glColor3f(0.0,0.0,1.0);
-
-    glVertex3f(-1.0,1.0,1.0);
-    glVertex3f(1.0,1.0,1.0);
-    glVertex3f(1.0,1.0,-1.0);
-    glVertex3f(-1.0,1.0,-1.0);
-
-
-    //bottom
-    glColor3f(0.0,1.0,1.0);
-
-    glVertex3f(1.0,-1.0,1.0);
-    glVertex3f(1.0,-1.0,-1.0);
-    glVertex3f(-1.0,-1.0,-1.0);
-    glVertex3f(-1.0,-1.0,1.0);
-
-    //right
-    glColor3f(1.0,0.0,1.0);
-
-    glVertex3f(1.0,1.0,1.0);
-    glVertex3f(1.0,-1.0,1.0);
-    glVertex3f(1.0,-1.0,-1.0);
-    glVertex3f(1.0,1.0,-1.0);
-
-
-    //left
-    glColor3f(1.0,1.0,0.0);
-
-    glVertex3f(-1.0,1.0,1.0);
-    glVertex3f(-1.0,-1.0,1.0);
-    glVertex3f(-1.0,-1.0,-1.0);
-    glVertex3f(-1.0,1.0,-1.0);
-
-    glEnd();
+    objParser.draw();
 }
 
 void GLWidget::resizeGL(int width, int height)
@@ -103,4 +49,16 @@ void GLWidget::resizeGL(int width, int height)
     glFrustum( -1.0, 1.0, -1.0, 1.0, 5.0, 30.0);
 
     glMatrixMode( GL_MODELVIEW );
+}
+
+void GLWidget::mousePressEvent(QMouseEvent *event)
+{
+}
+
+void GLWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+}
+
+void GLWidget::mouseMoveEvent(QMouseEvent *event)
+{
 }
