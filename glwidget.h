@@ -2,6 +2,7 @@
 #define OPENGLWIDGET_H
 
 #include <QGLWidget>
+#include <QOpenGLShaderProgram>
 #include <QColor>
 
 #include "objparser.h"
@@ -37,6 +38,7 @@ private:
     ObjParser objParser;
     QPoint lastPos;
     QVector3D position;
+    QOpenGLShaderProgram shaderProgram;
 };
 
 #endif // OPENGLWIDGET_H

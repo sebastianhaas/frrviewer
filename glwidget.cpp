@@ -1,5 +1,7 @@
 #include <QDateTime>
 #include <QKeyEvent>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLShader>
 
 #include "glwidget.h"
 
@@ -21,11 +23,20 @@ void GLWidget::initializeGL()
     glEnable(GL_DEPTH_TEST);
     glShadeModel(GL_FLAT);
     glShadeModel(GL_SMOOTH);
-    //    glEnable(GL_LIGHTING);
-    //    glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
     glEnable(GL_MULTISAMPLE);
-    //    static GLfloat lightPosition[4] = { 0.5, 5.0, 7.0, 1.0 };
-    //    glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+    static GLfloat lightPosition[4] = { 0.5, 5.0, 7.0, 1.0 };
+    glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+
+    QOpenGLShader vertexShader(QOpenGLShader::Vertex);
+    vertexShader.compileSourceFile("C:/Users/Sebastian/Desktop/toon.vert");
+    QOpenGLShader fragmentShader(QOpenGLShader::Fragment);
+    fragmentShader.compileSourceFile("C:/Users/Sebastian/Desktop/toon.frag");
+    shaderProgram.addShader(&vertexShader);
+    shaderProgram.addShader(&fragmentShader);
+    shaderProgram.link();
+    shaderProgram.bind();
 }
 
 void GLWidget::paintGL()
@@ -41,9 +52,11 @@ void GLWidget::paintGL()
     glRotatef(yRot / 16.0, 0.0, 1.0, 0.0);
     glRotatef(zRot / 16.0, 0.0, 0.0, 1.0);
 
+    drawAxes();
+
     objParser.draw();
     qDebug() << "paintGL();";
-    //    drawAxes();
+
 }
 
 void GLWidget::resizeGL(int width, int height)
@@ -62,13 +75,13 @@ void GLWidget::resizeGL(int width, int height)
 void GLWidget::drawAxes()
 {
     float L = 20;
-    glDisable(GL_LIGHTING);
+    //glDisable(GL_LIGHTING);
     glBegin(GL_LINES);
     glColor3f(1,0,0); glVertex3f(0,0,0); glVertex3f(L,0,0); // X
     glColor3f(0,1,0); glVertex3f(0,0,0); glVertex3f(0,L,0); // Y
     glColor3f(0,0,1); glVertex3f(0,0,0); glVertex3f(0,0,L); // Z
     glEnd();
-    glEnable(GL_LIGHTING);
+    //glEnable(GL_LIGHTING);
 }
 
 void GLWidget::mousePressEvent(QMouseEvent *event)
