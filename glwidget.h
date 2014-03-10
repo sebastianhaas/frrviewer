@@ -25,10 +25,11 @@ protected:
     void initializeGL();
     void paintGL();
     void resizeGL(int width, int height);
-    void drawAxes();
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
+    void drawAxes();
+    void drawGrid();
 
 private:
     int xRot;

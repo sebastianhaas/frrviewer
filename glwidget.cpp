@@ -53,6 +53,7 @@ void GLWidget::paintGL()
     glRotatef(zRot / 16.0, 0.0, 0.0, 1.0);
 
     drawAxes();
+    drawGrid();
 
     objParser.draw();
     qDebug() << "paintGL();";
@@ -67,21 +68,37 @@ void GLWidget::resizeGL(int width, int height)
     /* create viewing cone with near and far clipping planes */
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glFrustum( -1.0, 1.0, -1.0, 1.0, 5.0, 30.0);
+    glFrustum( -1.0, 1.0, -1.0, 1.0, 1.0, 100.0);
 
     glMatrixMode( GL_MODELVIEW );
+}
+
+void GLWidget::drawGrid()
+{
+    glDisable(GL_LIGHTING);
+    glBegin(GL_LINES);
+    for(int i=-10;i<=10;i++) {
+        if (i==0) { glColor3f(.6,.3,.3); } else { glColor3f(.25,.25,.25); };
+        glVertex3f(i,0,-10);
+        glVertex3f(i,0,10);
+        if (i==0) { glColor3f(.3,.3,.6); } else { glColor3f(.25,.25,.25); };
+        glVertex3f(-10,0,i);
+        glVertex3f(10,0,i);
+    };
+    glEnd();
+    glEnable(GL_LIGHTING);
 }
 
 void GLWidget::drawAxes()
 {
     float L = 20;
-    //glDisable(GL_LIGHTING);
+    glDisable(GL_LIGHTING);
     glBegin(GL_LINES);
     glColor3f(1,0,0); glVertex3f(0,0,0); glVertex3f(L,0,0); // X
     glColor3f(0,1,0); glVertex3f(0,0,0); glVertex3f(0,L,0); // Y
     glColor3f(0,0,1); glVertex3f(0,0,0); glVertex3f(0,0,L); // Z
     glEnd();
-    //glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHTING);
 }
 
 void GLWidget::mousePressEvent(QMouseEvent *event)
