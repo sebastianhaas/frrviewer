@@ -10,7 +10,7 @@ GLWidget::GLWidget(QWidget *parent)
 {
     backgroundColor = QColor::fromRgb(235.0, 235.0, 235.0);
     position = QVector3D(0.0, 0.0, -20.0);
-    objParser.readObjFile("C:/Users/Sebastian/Desktop/capsule.obj");
+    objParser.readObjFile("C:/Users/Sebastian/Documents/3dsMax/export/toureffeil.obj");
 }
 
 GLWidget::~GLWidget()
@@ -56,8 +56,6 @@ void GLWidget::paintGL()
     drawGrid();
 
     objParser.draw();
-    qDebug() << "paintGL();";
-
 }
 
 void GLWidget::resizeGL(int width, int height)

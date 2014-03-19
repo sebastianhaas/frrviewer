@@ -23,6 +23,8 @@ ObjParser::~ObjParser()
 void ObjParser::readObjFile(const QString &name)
 {
     QVector<GLushort> currentFace;
+    QVector<QVector3D> verticesObjCache;
+    QVector<QVector3D> normalsObjCache;
     int faceCount = 0;
     qreal x;
     qreal y;
@@ -57,14 +59,14 @@ void ObjParser::readObjFile(const QString &name)
                     x = tokens.at(1).toFloat();
                     y = tokens.at(2).toFloat();
                     z = tokens.at(3).toFloat();
-                    vertices.append(QVector3D(x,y,z));
+                    verticesObjCache.append(QVector3D(x,y,z));
                 }
                 else if(tokens.at(0) == "vn")
                 {
                     x = tokens.at(1).toFloat();
                     y = tokens.at(2).toFloat();
                     z = tokens.at(3).toFloat();
-                    normals.append(QVector3D(x,y,z));
+                    normalsObjCache.append(QVector3D(x,y,z));
                 }
                 continue;
             }
@@ -89,19 +91,15 @@ void ObjParser::readObjFile(const QString &name)
                         QStringList values = tokens.at(i).split(QRegExp("/"), QString::SkipEmptyParts);
                         if(values.size() == 2) {
                             //vertex//normal
-                            currentFace.append(values.at(0).toInt());
+                            vertices.append(verticesObjCache.at(values.at(0).toInt()-1));
+                            normals.append(normalsObjCache.at(values.at(1).toInt()-1));
                         }
                         else if(values.size() == 3) {
                             //vertex/texture-coordinate/normal
-                            currentFace.append(values.at(0).toInt());
+                            vertices.append(verticesObjCache.at(values.at(0).toInt()-1));
+                            normals.append(normalsObjCache.at(values.at(2).toInt()-1));
                         }
                     }
-                }
-
-                //transfer current face to faces list
-                for(int j = 0; j<currentFace.size(); j++)
-                {
-                    faces.append(currentFace.at(j) - 1);
                 }
                 faceCount++;
                 continue;
@@ -133,8 +131,9 @@ void ObjParser::draw()
 
     glColor3f(1.0, 0.5, 0.3);
 
-    const GLushort *indices = faces.constData();
-    glDrawElements(GL_TRIANGLES, faces.size(), GL_UNSIGNED_SHORT, indices);
+    //const GLushort *indices = faces.constData();
+    //glDrawElements(GL_TRIANGLES, faces.size(), GL_UNSIGNED_SHORT, indices);
+    glDrawArrays(GL_TRIANGLES, 0, vertices.count());
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
