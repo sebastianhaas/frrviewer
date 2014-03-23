@@ -1,7 +1,6 @@
 #include <QtWidgets>
 
 #include "glwidget.h"
-#include "objparser.h"
 
 int main(int argc, char *argv[])
 {

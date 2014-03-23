@@ -5,9 +5,9 @@
 #include <QVector3D>
 #include <QGLWidget>
 
-#include "objparser.h"
+#include "mesh.h"
 
-ObjParser::ObjParser()
+Mesh::Mesh()
 {
     QColor c(Qt::darkGray);
     matColor[0] = c.redF();
@@ -16,11 +16,11 @@ ObjParser::ObjParser()
     matColor[3] = c.alphaF();
 }
 
-ObjParser::~ObjParser()
+Mesh::~Mesh()
 {
 }
 
-void ObjParser::readObjFile(const QString &name)
+void Mesh::readObjFile(const QString &name)
 {
     QVector<GLushort> currentFace;
     QVector<QVector3D> verticesObjCache;
@@ -121,15 +121,18 @@ void ObjParser::readObjFile(const QString &name)
     inputFile.close();
 }
 
-void ObjParser::draw()
+void Mesh::draw()
 {
+    glPushMatrix();
+    glTranslatef(translation.x(), translation.y(), translation.z());
+
     glVertexPointer(3, GL_FLOAT, 0, vertices.constData());
     glNormalPointer(GL_FLOAT, 0, normals.constData());
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
 
-    glColor3f(1.0, 0.5, 0.3);
+    glColor3f(1.0, 0.7, 0.7);
 
     //const GLushort *indices = faces.constData();
     //glDrawElements(GL_TRIANGLES, faces.size(), GL_UNSIGNED_SHORT, indices);
@@ -137,6 +140,8 @@ void ObjParser::draw()
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
+
+    glPopMatrix();
 }
 
 void convertGLColor(float colorVec[], QColor c)

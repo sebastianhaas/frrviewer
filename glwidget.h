@@ -5,7 +5,7 @@
 #include <QOpenGLShaderProgram>
 #include <QColor>
 
-#include "objparser.h"
+#include "mesh.h"
 
 class GLWidget : public QGLWidget
 {
@@ -35,11 +35,12 @@ private:
     int xRot;
     int yRot;
     int zRot;
+
     QColor backgroundColor;
-    ObjParser objParser;
     QPoint lastPos;
     QVector3D position;
     QOpenGLShaderProgram shaderProgram;
+    QList<Mesh> meshes;
 };
 
 #endif // OPENGLWIDGET_H

@@ -1,18 +1,20 @@
-#ifndef OBJPARSER_H
-#define OBJPARSER_H
+#ifndef MESH_H
+#define MESH_H
 
 #include <QString>
 #include <QMatrix4x4>
 #include <QGLWidget>
 
-class ObjParser
+class Mesh
 {
 public:
-    ObjParser();
-    ~ObjParser();
+    Mesh();
+    ~Mesh();
 
     void readObjFile(const QString &name);
     void draw();
+
+    QVector3D translation;
 
 private:
     QVector<QVector3D> vertices;
@@ -24,4 +26,4 @@ private:
     void convertGLColor(float colorVec[], QColor c);
 };
 
-#endif // OBJPARSER_H
+#endif // MESH_H

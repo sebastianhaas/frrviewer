@@ -10,7 +10,19 @@ GLWidget::GLWidget(QWidget *parent)
 {
     backgroundColor = QColor::fromRgb(235.0, 235.0, 235.0);
     position = QVector3D(0.0, 0.0, -20.0);
-    objParser.readObjFile("C:/Users/Sebastian/Documents/3dsMax/export/toureffeil.obj");
+    xRot = 0;
+    yRot = 0;
+    zRot = 0;
+    //objParser.readObjFile("C:/Users/Sebastian/Documents/3dsMax/export/toureffeil.obj");
+    Mesh mesh = Mesh();
+    mesh.readObjFile("C:/Users/Sebastian/Desktop/capsule.obj");
+    mesh.translation = QVector3D(2, 0, -2);
+    meshes.append(mesh);
+
+    mesh = Mesh();
+    mesh.readObjFile("C:/Users/Sebastian/Desktop/cube.obj");
+    mesh.translation = QVector3D(10, 0, 10);
+    meshes.append(mesh);
 }
 
 GLWidget::~GLWidget()
@@ -51,11 +63,16 @@ void GLWidget::paintGL()
     glRotatef(xRot / 16.0, 1.0, 0.0, 0.0);
     glRotatef(yRot / 16.0, 0.0, 1.0, 0.0);
     glRotatef(zRot / 16.0, 0.0, 0.0, 1.0);
+    //applyCamera();
 
     drawAxes();
     drawGrid();
 
-    objParser.draw();
+    // draw meshes
+    for(int i=0; i<meshes.size(); i++) {
+        Mesh m = meshes.at(i);
+        m.draw();
+    }
 }
 
 void GLWidget::resizeGL(int width, int height)
@@ -113,8 +130,8 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         setXRotation(xRot + 8 * dy);
         setYRotation(yRot + 8 * dx);
     } else if (event->buttons() & Qt::RightButton) {
-        setXRotation(xRot + 8 * dy);
-        setZRotation(zRot + 8 * dx);
+        setXRotation(xRot - 8 * dy);
+        setZRotation(zRot - 8 * dx);
     }
     lastPos = event->pos();
 }
@@ -156,7 +173,7 @@ void GLWidget::setZRotation(int angle)
 
 void GLWidget::keyPressEvent(QKeyEvent *event)
 {
-    float speed = 0.5;
+    float speed = 0.3;
     QVector3D direction = QVector3D(0.0, 0.0, 1.0);
     QVector3D right = QVector3D(1.0 ,0.0, 0.0);
 
@@ -170,12 +187,11 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
     }
     // Strafe right
     if (event->key() == Qt::Key_D){
-        position += right * speed;
+        position -= right * speed;
     }
     // Strafe left
     if(event->key() == Qt::Key_A) {
-        position -= right * speed;
-        qDebug() << position;
+        position += right * speed;
     }
 
     updateGL();

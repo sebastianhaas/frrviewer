@@ -1,10 +1,10 @@
 HEADERS += \
     glwidget.h \
-    objparser.h
+    mesh.h
 
 SOURCES += \
     main.cpp \
     glwidget.cpp \
-    objparser.cpp
+    mesh.cpp
 
 QT      += opengl widgets
