@@ -14,6 +14,10 @@ Mesh::Mesh()
     matColor[1] = c.greenF();
     matColor[2] = c.blueF();
     matColor[3] = c.alphaF();
+
+    // set bounding box rendering to off by default
+    isBoundingBoxVisible = false;
+    boundingBoxColor = Qt::magenta;
 }
 
 Mesh::~Mesh()
@@ -121,7 +125,7 @@ void Mesh::readObjFile(const QString &name)
     inputFile.close();
 }
 
-void Mesh::draw()
+void Mesh::draw() const
 {
     glPushMatrix();
     glTranslatef(translation.x(), translation.y(), translation.z());
@@ -138,16 +142,87 @@ void Mesh::draw()
     //glDrawElements(GL_TRIANGLES, faces.size(), GL_UNSIGNED_SHORT, indices);
     glDrawArrays(GL_TRIANGLES, 0, vertices.count());
 
+    if(isBoundingBoxVisible)
+        drawBoundingBox();
+
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
 
     glPopMatrix();
 }
 
-void convertGLColor(float colorVec[], QColor c)
+void Mesh::drawBoundingBox() const
 {
-    colorVec[0] = c.redF();
-    colorVec[1] = c.greenF();
-    colorVec[2] = c.blueF();
-    colorVec[3] = c.alphaF();
+    glDisable(GL_LIGHTING);
+    glColor3f(boundingBoxColor.redF(), boundingBoxColor.greenF(), boundingBoxColor.blueF());
+
+    glBegin(GL_LINES);
+
+    // front
+    glVertex3f(boundingMin.x(), boundingMax.y(), boundingMax.z());
+    glVertex3f(boundingMax.x(), boundingMax.y(), boundingMax.z());
+    glVertex3f(boundingMin.x(), boundingMin.y(), boundingMax.z());
+    glVertex3f(boundingMax.x(), boundingMin.y(), boundingMax.z());
+    glVertex3f(boundingMin.x(), boundingMin.y(), boundingMax.z());
+    glVertex3f(boundingMin.x(), boundingMax.y(), boundingMax.z());
+    glVertex3f(boundingMax.x(), boundingMin.y(), boundingMax.z());
+    glVertex3f(boundingMax.x(), boundingMax.y(), boundingMax.z());
+
+    // back
+    glVertex3f(boundingMin.x(), boundingMax.y(), boundingMin.z());
+    glVertex3f(boundingMax.x(), boundingMax.y(), boundingMin.z());
+    glVertex3f(boundingMin.x(), boundingMin.y(), boundingMin.z());
+    glVertex3f(boundingMax.x(), boundingMin.y(), boundingMin.z());
+    glVertex3f(boundingMin.x(), boundingMin.y(), boundingMin.z());
+    glVertex3f(boundingMin.x(), boundingMax.y(), boundingMin.z());
+    glVertex3f(boundingMax.x(), boundingMin.y(), boundingMin.z());
+    glVertex3f(boundingMax.x(), boundingMax.y(), boundingMin.z());
+
+    // top
+    glVertex3f(boundingMin.x(), boundingMax.y(), boundingMax.z());
+    glVertex3f(boundingMin.x(), boundingMax.y(), boundingMin.z());
+    glVertex3f(boundingMax.x(), boundingMax.y(), boundingMax.z());
+    glVertex3f(boundingMax.x(), boundingMax.y(), boundingMin.z());
+
+    // bottom
+    glVertex3f(boundingMin.x(), boundingMin.y(), boundingMax.z());
+    glVertex3f(boundingMin.x(), boundingMin.y(), boundingMin.z());
+    glVertex3f(boundingMax.x(), boundingMin.y(), boundingMax.z());
+    glVertex3f(boundingMax.x(), boundingMin.y(), boundingMin.z());
+
+    glEnd();
+    glEnable(GL_LIGHTING);
+}
+
+void Mesh::calculateBoundingBox()
+{
+    float min_x, min_y, min_z, max_x, max_y, max_z;
+    min_x = max_x = vertices.at(0).x();
+    min_y = max_y = vertices.at(0).y();
+    min_z = max_z = vertices.at(0).z();
+    for(int i = 0; i<vertices.size(); i++) {
+        // x-axis
+        if(vertices.at(i).x() < min_x)
+            min_x = vertices.at(i).x();
+        if(vertices.at(i).x() > max_x)
+            max_x = vertices.at(i).x();
+        // y-axis
+        if(vertices.at(i).y() < min_y)
+            min_y = vertices.at(i).y();
+        if(vertices.at(i).y() > max_y)
+            max_y = vertices.at(i).y();
+        // z-axis
+        if(vertices.at(i).z() < min_z)
+            min_z = vertices.at(i).z();
+        if(vertices.at(i).z() > max_z)
+            max_z = vertices.at(i).z();
+    }
+
+    boundingMin = QVector3D(min_x, min_y, min_z);
+    boundingMax = QVector3D(max_x, max_y, max_z);
+}
+
+void Mesh::setBoundingBoxVisible(bool visible)
+{
+    isBoundingBoxVisible = visible;
 }

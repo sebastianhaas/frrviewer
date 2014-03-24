@@ -28,6 +28,7 @@ protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent *event);
     void drawAxes();
     void drawGrid();
 
@@ -35,7 +36,7 @@ private:
     int xRot;
     int yRot;
     int zRot;
-
+    bool boundingBoxesVisible;
     QColor backgroundColor;
     QPoint lastPos;
     QVector3D position;

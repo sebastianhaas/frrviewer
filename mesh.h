@@ -12,18 +12,25 @@ public:
     ~Mesh();
 
     void readObjFile(const QString &name);
-    void draw();
+    void draw() const;
+    void calculateBoundingBox();
+    void setBoundingBoxVisible(bool visible);
 
     QVector3D translation;
+    QColor boundingBoxColor;
 
 private:
+    void drawBoundingBox() const;
+
     QVector<QVector3D> vertices;
     QVector<QVector3D> normals;
     QVector<GLushort> faces;
     GLushort start;
     QMatrix4x4 matrix;
     GLfloat matColor[4];
-    void convertGLColor(float colorVec[], QColor c);
+    QVector3D boundingMin;
+    QVector3D boundingMax;
+    bool isBoundingBoxVisible;
 };
 
 #endif // MESH_H

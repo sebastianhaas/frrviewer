@@ -10,17 +10,20 @@ GLWidget::GLWidget(QWidget *parent)
 {
     backgroundColor = QColor::fromRgb(235.0, 235.0, 235.0);
     position = QVector3D(0.0, 0.0, -20.0);
+    boundingBoxesVisible = false;
     xRot = 0;
     yRot = 0;
     zRot = 0;
-    //objParser.readObjFile("C:/Users/Sebastian/Documents/3dsMax/export/toureffeil.obj");
+
     Mesh mesh = Mesh();
     mesh.readObjFile("C:/Users/Sebastian/Desktop/capsule.obj");
+    mesh.calculateBoundingBox();
     mesh.translation = QVector3D(2, 0, -2);
     meshes.append(mesh);
 
     mesh = Mesh();
     mesh.readObjFile("C:/Users/Sebastian/Desktop/cube.obj");
+    mesh.calculateBoundingBox();
     mesh.translation = QVector3D(10, 0, 10);
     meshes.append(mesh);
 }
@@ -41,14 +44,14 @@ void GLWidget::initializeGL()
     static GLfloat lightPosition[4] = { 0.5, 5.0, 7.0, 1.0 };
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 
-    QOpenGLShader vertexShader(QOpenGLShader::Vertex);
-    vertexShader.compileSourceFile("C:/Users/Sebastian/Desktop/toon.vert");
-    QOpenGLShader fragmentShader(QOpenGLShader::Fragment);
-    fragmentShader.compileSourceFile("C:/Users/Sebastian/Desktop/toon.frag");
-    shaderProgram.addShader(&vertexShader);
-    shaderProgram.addShader(&fragmentShader);
-    shaderProgram.link();
-    shaderProgram.bind();
+    //    QOpenGLShader vertexShader(QOpenGLShader::Vertex);
+    //    vertexShader.compileSourceFile("C:/Users/Sebastian/Desktop/toon.vert");
+    //    QOpenGLShader fragmentShader(QOpenGLShader::Fragment);
+    //    fragmentShader.compileSourceFile("C:/Users/Sebastian/Desktop/toon.frag");
+    //    shaderProgram.addShader(&vertexShader);
+    //    shaderProgram.addShader(&fragmentShader);
+    //    shaderProgram.link();
+    //    shaderProgram.bind();
 }
 
 void GLWidget::paintGL()
@@ -70,8 +73,7 @@ void GLWidget::paintGL()
 
     // draw meshes
     for(int i=0; i<meshes.size(); i++) {
-        Mesh m = meshes.at(i);
-        m.draw();
+        meshes.at(i).draw();
     }
 }
 
@@ -194,5 +196,16 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
         position += right * speed;
     }
 
+    updateGL();
+}
+
+void GLWidget::keyReleaseEvent(QKeyEvent *event)
+{
+    if(event->key()== Qt::Key_B) {
+        boundingBoxesVisible = !boundingBoxesVisible;
+        for(int i = 0; i < meshes.size(); i++) {
+            meshes[i].setBoundingBoxVisible(boundingBoxesVisible);
+        }
+    }
     updateGL();
 }
