@@ -4,6 +4,7 @@
 #include <QGLWidget>
 #include <QOpenGLShaderProgram>
 #include <QColor>
+#include <QOpenGLTimerQuery>
 
 #include "mesh.h"
 
@@ -42,6 +43,7 @@ private:
     QVector3D position;
     QOpenGLShaderProgram shaderProgram;
     QList<Mesh> meshes;
+    QOpenGLTimerQuery timerQuery;
 };
 
 #endif // OPENGLWIDGET_H

@@ -26,6 +26,24 @@ GLWidget::GLWidget(QWidget *parent)
     mesh.calculateBoundingBox();
     mesh.translation = QVector3D(10, 0, 10);
     meshes.append(mesh);
+
+    mesh = Mesh();
+    mesh.readObjFile("C:/Users/Sebastian/Desktop/armchair.obj");
+    mesh.calculateBoundingBox();
+    mesh.translation = QVector3D(-15, 0, 15);
+    meshes.append(mesh);
+
+    mesh = Mesh();
+    mesh.readObjFile("C:/Users/Sebastian/Desktop/armchair.obj");
+    mesh.calculateBoundingBox();
+    mesh.translation = QVector3D(-15, 0, 20);
+    meshes.append(mesh);
+
+    mesh = Mesh();
+    mesh.readObjFile("C:/Users/Sebastian/Desktop/armchair.obj");
+    mesh.calculateBoundingBox();
+    mesh.translation = QVector3D(-20, 0, 20);
+    meshes.append(mesh);
 }
 
 GLWidget::~GLWidget()
@@ -52,6 +70,11 @@ void GLWidget::initializeGL()
     //    shaderProgram.addShader(&fragmentShader);
     //    shaderProgram.link();
     //    shaderProgram.bind();
+
+    timerQuery.create();
+
+    const char* version = (const char*)glGetString(GL_VERSION);
+    qDebug() << "OpenGL Version : " << version;
 }
 
 void GLWidget::paintGL()
@@ -71,10 +94,14 @@ void GLWidget::paintGL()
     drawAxes();
     drawGrid();
 
+    timerQuery.begin();
     // draw meshes
     for(int i=0; i<meshes.size(); i++) {
         meshes.at(i).draw();
     }
+    timerQuery.end();
+
+    qDebug() << timerQuery.waitForResult() / 1000000.0;
 }
 
 void GLWidget::resizeGL(int width, int height)
